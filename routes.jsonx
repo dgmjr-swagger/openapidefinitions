@@ -1,0 +1,23 @@
+[
+    {
+      "route": "/telegram/latest",
+      "rewrite": "/telegram/v5.0.0/openapi-with-bot-token-variable.yml",
+      "headers": {"content-type":"application/x-yaml"}
+    },
+    {
+      "route": "/telegram/v5.0.0/openapi-with-bot-token-variable.yml",
+      "rewrite": "/telegram/v5.0.0/openapi-with-bot-token-variable.yml"
+    },
+    {
+      "route": "/atlassian/compass/v1.0/openapi.json",
+      "rewrite": "/atlassian/compass/v1.0/openapi.json"
+    },
+    {
+      "route": "/atlassian/confluence/v1.0.0/openapi.json",
+      "rewrite": "/atlassian/confluence/v1.0.0/openapi.json"
+    },
+    {
+      "route": "/atlassian/confluence/v1.0.0/openapi.json",
+      "rewrite": "/atlassian/confluence/v1.0.0/openapi.json"
+    }
+  ]

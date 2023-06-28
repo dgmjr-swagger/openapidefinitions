@@ -1,0 +1,6 @@
+{
+    "globalHeaders": {
+      "Access-Control-Allow-Origin": ["*.dgmjr.io","*.jiraapi.com","*.confluenceapi.com","*.my-api.app","*.my-api.com"],
+      "Access-Control-Allow-Methods": ["GET", "OPTIONS", "POST"]
+    }
+  }
