@@ -1,0 +1,1830 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Get or Set from Redis Cache",
+        "description": "This service is used to cache HTTP responses.  It can be used in two ways:\r\n## GET\r\n\r\nUsed to cache <c>GET</c> requests from an HTTP service.  Cannnot be used to send any headers or <c>post</c> any information.  Can be used for simple <c>get</c> requests only.\r\n\r\n## PUT or POST\r\n\r\nThese methods can be used to call <c>PUT</c> or <c>POST</c> requests to an HTTP service.  They receive a payload of the type <c>HttpRequestMessage</c>, which contains all the information required to <c>put</c> or <c>post</c> to the requested HTTP endpoint.  \r\n\r\n*Note if sending header information along with a <c>get</c> request, these can be used for that purpose too.  Simply set their HTTP methods to <c>get</c>*.\r\n",
+        "termsOfService": "https://example.com/terms",
+        "contact": {
+            "name": "David G. Moore, Jr.",
+            "url": "https://github.com/dmjr-swagger"
+        },
+        "license": {
+            "name": "MIT"
+        },
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "https://cache.dgmjr.io"
+        }
+    ],
+    "paths": {
+        "/api/cache/keys": {
+            "get": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Retrieves a list of keys currently in the cache, with an optional pattern",
+                "description": "Retrieves a list of keys currently in the cache, with an optional pattern",
+                "operationId": "getKeys",
+                "parameters": [
+                    {
+                        "name": "pattern",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "default": "*"
+                        }
+                    },
+                    {
+                        "name": "Range",
+                        "$ref": "#/components/parameters/Range"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The list of keys was retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "418": {
+                        "$ref": "#/components/responses/418"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/api/cache/{key}/expiration": {
+            "get": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Retrieves the expiration date/time of the requested key",
+                "description": "Retrieves the expiration date/time of the requested key",
+                "operationId": "GetKeyExpiration",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "$ref": "#/components/responses/204Expires"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404"
+                    },
+                    "418": {
+                        "$ref": "#/components/responses/418"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        "/api/cache": {
+            "get": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Get a cached HTTP response from the redis cache",
+                "description": "Get a cached HTTP response from the redis cache",
+                "operationId": "GetCache",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "description": "The key to use for the cached value",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "description": "The URL to GET",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    {
+                        "name": "Cache-Control",
+                        "$ref": "#/components/parameters/Cache-Control"
+                    },
+                    {
+                        "name": "Accept",
+                        "$ref": "#/components/parameters/Accept"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Either the cached value was found and returned or it was retrieved from the HTTP endpoint and cached",
+                        "content": {
+                            "application/json+cache": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CacheInfoResponse"
+                                },
+                                "example": {
+                                    "contentType": "string",
+                                    "content": "string",
+                                    "statusCode": 0,
+                                    "headers": {},
+                                    "reasonPhrase": "string",
+                                    "isSuccessStatusCode": true,
+                                    "createdDateTime": "2023-07-15Z09:00:00",
+                                    "originalExpiration": "2023-07-15Z09:05:00",
+                                    "expirationDateTime": "2023-07-15Z09:05:00",
+                                    "originalTimeToLive": "00:10:00",
+                                    "timeToLive": "00:05:00"
+                                }
+                            },
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": "Hello, world!"
+                                    }
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "html"
+                                },
+                                "example": "<html>\r\n  <body>\r\n    <p>Hello, world!</p>\r\n  </body>\r\n</html>"
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "xml"
+                                },
+                                "example": "<note>\r\n  <to>Tove</to>\r\n  <from>Jani</from>\r\n  <heading>Reminder</heading>\r\n  <body>Don't forget me this weekend!</body>\r\n</note>"
+                            },
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "application/x-www-formurlencoded": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": "foo=bar&baz=quux"
+                                    }
+                                }
+                            },
+                            "video/mp4": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "video/mpeg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "video/ogg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/jpeg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/png": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/gif": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "title": "Bad Request!!!",
+                                    "status": 400,
+                                    "detail": "You done fucked up!  You sent a bad request to the server and now it's refusing to respond to you!",
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+                                    "title": "D!N!F!E!",
+                                    "status": 404,
+                                    "detail": "The shit you're looking for Does! Not! Fucking! Exist!"
+                                }
+                            }
+                        }
+                    },
+                    "418": {
+                        "description": "I'm a fucking TEAPOT, you moron!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418",
+                                    "title": "I'm a fucking TEAPOT, you moron!",
+                                    "status": 418,
+                                    "detail": "I'mm a fucking teapot, short and stout. Here is my handle, here is my spout.  If you've reached this error code, you must shout, \"I'm a fucking idiot so kick me out!\""
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                                    "title": "OMG WE'RE ALL GONNA DIE!!!!",
+                                    "status": 500,
+                                    "detail": "THE SHIT HIT THE FUCKING FAN AND THE SERVER DOESN'T KNOW WTF JUST HAPPENED!!!"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Puts to the cache",
+                "description": "Puts to the cache",
+                "operationId": "PutCache",
+                "parameters": [
+                    {
+                        "name": "cacheKey",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "expiration",
+                        "in": "query",
+                        "description": "Format - time-span.",
+                        "schema": {
+                            "$ref": "#/components/schemas/TimeSpan"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "example": {
+                                "requestUri": "string",
+                                "method": "Get",
+                                "contentType": "string",
+                                "bytesContent": "string",
+                                "stringContent": "string",
+                                "headers": {}
+                            }
+                        },
+                        "application/x-www-formurlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "examples": {
+                                "default": {
+                                    "value": null
+                                }
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "requestUri": {
+                                        "type": "string"
+                                    },
+                                    "method": {
+                                        "enum": [
+                                            "Get",
+                                            "Post",
+                                            "Put",
+                                            "Delete",
+                                            "Patch",
+                                            "Head",
+                                            "Options",
+                                            "Trace"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "contentType": {
+                                        "type": "string"
+                                    },
+                                    "bytesContent": {
+                                        "type": "string"
+                                    },
+                                    "stringContent": {
+                                        "type": "string"
+                                    },
+                                    "headers": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Either the cached value was found and returned or it was retrieved from the HTTP endpoint and cached",
+                        "content": {
+                            "application/json+cache": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CacheInfoResponse"
+                                },
+                                "example": {
+                                    "contentType": "string",
+                                    "content": "string",
+                                    "statusCode": 0,
+                                    "headers": {},
+                                    "reasonPhrase": "string",
+                                    "isSuccessStatusCode": true,
+                                    "createdDateTime": "2023-07-15Z09:00:00",
+                                    "originalExpiration": "2023-07-15Z09:05:00",
+                                    "expirationDateTime": "2023-07-15Z09:05:00",
+                                    "originalTimeToLive": "00:10:00",
+                                    "timeToLive": "00:05:00"
+                                }
+                            },
+                            "anyOf": {
+                                "$ref": "#/components/responses/errors"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "title": "Bad Request!!!",
+                                    "status": 400,
+                                    "detail": "You done fucked up!  You sent a bad request to the server and now it's refusing to respond to you!",
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+                                    "title": "D!N!F!E!",
+                                    "status": 404,
+                                    "detail": "The shit you're looking for Does! Not! Fucking! Exist!"
+                                }
+                            }
+                        }
+                    },
+                    "418": {
+                        "description": "I'm a fucking TEAPOT, you moron!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418",
+                                    "title": "I'm a fucking TEAPOT, you moron!",
+                                    "status": 418,
+                                    "detail": "I'mm a fucking teapot, short and stout. Here is my handle, here is my spout.  If you've reached this error code, you must shout, \"I'm a fucking idiot so kick me out!\""
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                                    "title": "OMG WE'RE ALL GONNA DIE!!!!",
+                                    "status": 500,
+                                    "detail": "THE SHIT HIT THE FUCKING FAN AND THE SERVER DOESN'T KNOW WTF JUST HAPPENED!!!"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Posts to the cache",
+                "description": "Posts to the cache",
+                "operationId": "PostCache",
+                "parameters": [
+                    {
+                        "name": "cacheKey",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "expiration",
+                        "in": "query",
+                        "description": "Format - time-span.",
+                        "schema": {
+                            "$ref": "#/components/schemas/TimeSpan"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "example": {
+                                "requestUri": "string",
+                                "method": "Get",
+                                "contentType": "string",
+                                "bytesContent": "string",
+                                "stringContent": "string",
+                                "headers": {}
+                            }
+                        },
+                        "application/x-www-formurlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "examples": {
+                                "default": {
+                                    "value": null
+                                }
+                            }
+                        },
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "requestUri": {
+                                        "type": "string"
+                                    },
+                                    "method": {
+                                        "enum": [
+                                            "Get",
+                                            "Post",
+                                            "Put",
+                                            "Delete",
+                                            "Patch",
+                                            "Head",
+                                            "Options",
+                                            "Trace"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "contentType": {
+                                        "type": "string"
+                                    },
+                                    "bytesContent": {
+                                        "type": "string"
+                                    },
+                                    "stringContent": {
+                                        "type": "string"
+                                    },
+                                    "headers": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Either the cached value was found and returned or it was retrieved from the HTTP endpoint and cached",
+                        "content": {
+                            "application/json+cache": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CacheInfoResponse"
+                                },
+                                "example": {
+                                    "contentType": "string",
+                                    "content": "string",
+                                    "statusCode": 0,
+                                    "headers": {},
+                                    "reasonPhrase": "string",
+                                    "isSuccessStatusCode": true,
+                                    "createdDateTime": "2023-07-15Z09:00:00",
+                                    "originalExpiration": "2023-07-15Z09:05:00",
+                                    "expirationDateTime": "2023-07-15Z09:05:00",
+                                    "originalTimeToLive": "00:10:00",
+                                    "timeToLive": "00:05:00"
+                                }
+                            },
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": "Hello, world!"
+                                    }
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "html"
+                                },
+                                "example": "<html>\r\n  <body>\r\n    <p>Hello, world!</p>\r\n  </body>\r\n</html>"
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "xml"
+                                },
+                                "example": "<note>\r\n  <to>Tove</to>\r\n  <from>Jani</from>\r\n  <heading>Reminder</heading>\r\n  <body>Don't forget me this weekend!</body>\r\n</note>"
+                            },
+                            "application/octet-stream": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "application/x-www-formurlencoded": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": "foo=bar&baz=quux"
+                                    }
+                                }
+                            },
+                            "video/mp4": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "video/mpeg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "video/ogg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/jpeg": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/png": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            },
+                            "image/gif": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "title": "Bad Request!!!",
+                                    "status": 400,
+                                    "detail": "You done fucked up!  You sent a bad request to the server and now it's refusing to respond to you!",
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+                                    "title": "D!N!F!E!",
+                                    "status": 404,
+                                    "detail": "The shit you're looking for Does! Not! Fucking! Exist!"
+                                }
+                            }
+                        }
+                    },
+                    "418": {
+                        "description": "I'm a fucking TEAPOT, you moron!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418",
+                                    "title": "I'm a fucking TEAPOT, you moron!",
+                                    "status": 418,
+                                    "detail": "I'mm a fucking teapot, short and stout. Here is my handle, here is my spout.  If you've reached this error code, you must shout, \"I'm a fucking idiot so kick me out!\""
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                                    "title": "OMG WE'RE ALL GONNA DIE!!!!",
+                                    "status": 500,
+                                    "detail": "THE SHIT HIT THE FUCKING FAN AND THE SERVER DOESN'T KNOW WTF JUST HAPPENED!!!"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Deletes an item from the cache",
+                "description": "Deletes an item from the cache",
+                "operationId": "Delete",
+                "parameters": [
+                    {
+                        "name": "cacheKey",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "The cache entry was deleted successfully."
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "title": "Bad Request!!!",
+                                    "status": 400,
+                                    "detail": "You done fucked up!  You sent a bad request to the server and now it's refusing to respond to you!",
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+                                    "title": "D!N!F!E!",
+                                    "status": 404,
+                                    "detail": "The shit you're looking for Does! Not! Fucking! Exist!"
+                                }
+                            }
+                        }
+                    },
+                    "418": {
+                        "description": "I'm a fucking TEAPOT, you moron!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418",
+                                    "title": "I'm a fucking TEAPOT, you moron!",
+                                    "status": 418,
+                                    "detail": "I'mm a fucking teapot, short and stout. Here is my handle, here is my spout.  If you've reached this error code, you must shout, \"I'm a fucking idiot so kick me out!\""
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                                    "title": "OMG WE'RE ALL GONNA DIE!!!!",
+                                    "status": 500,
+                                    "detail": "THE SHIT HIT THE FUCKING FAN AND THE SERVER DOESN'T KNOW WTF JUST HAPPENED!!!"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cache/const": {
+            "get": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Get a cached constant response from the redis cache",
+                "description": "Get a cached constant response from the redis cache",
+                "operationId": "getConst",
+                "parameters": [
+                    {
+                        "name": "mimeType",
+                        "in": "query",
+                        "description": "The MIME type of the constant response",
+                        "schema": {
+                            "type": "string",
+                            "default": "text/plain"
+                        }
+                    },
+                    {
+                        "name": "expiration",
+                        "in": "query",
+                        "description": "Format - time-span. The result's time-to-live in the cache before being purged",
+                        "schema": {
+                            "$ref": "#/components/schemas/TimeSpan"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "The cache entry was deleted successfully."
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "title": "Bad Request!!!",
+                                    "status": 400,
+                                    "detail": "You done fucked up!  You sent a bad request to the server and now it's refusing to respond to you!",
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+                                    "title": "D!N!F!E!",
+                                    "status": 404,
+                                    "detail": "The shit you're looking for Does! Not! Fucking! Exist!"
+                                }
+                            }
+                        }
+                    },
+                    "418": {
+                        "description": "I'm a fucking TEAPOT, you moron!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418",
+                                    "title": "I'm a fucking TEAPOT, you moron!",
+                                    "status": 418,
+                                    "detail": "I'mm a fucking teapot, short and stout. Here is my handle, here is my spout.  If you've reached this error code, you must shout, \"I'm a fucking idiot so kick me out!\""
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProblemDetails"
+                                },
+                                "example": {
+                                    "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                                    "title": "OMG WE'RE ALL GONNA DIE!!!!",
+                                    "status": 500,
+                                    "detail": "THE SHIT HIT THE FUCKING FAN AND THE SERVER DOESN'T KNOW WTF JUST HAPPENED!!!"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Puts a constant value into the cache",
+                "description": "Puts a constant value into the cache",
+                "operationId": "PutConst",
+                "parameters": [
+                    {
+                        "name": "cacheKey",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "constantValue",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "contentType",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "expiration",
+                        "in": "query",
+                        "description": "Format - time-span.",
+                        "schema": {
+                            "$ref": "#/components/schemas/TimeSpan"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "text/plain": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "examples": {
+                                "default": {
+                                    "value": null
+                                }
+                            }
+                        },
+                        "text/html": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "example": "<Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest> <requestUri>string</requestUri> <method>Get</method> <contentType>string</contentType> <bytesContent>string</bytesContent> <stringContent>string</stringContent> <headers /> </Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest>"
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "example": {
+                                "requestUri": "string",
+                                "method": "Get",
+                                "contentType": "string",
+                                "bytesContent": "string",
+                                "stringContent": "string",
+                                "headers": {}
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Either the cached value was found and returned or it was retrieved from the HTTP endpoint and cached",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "example": {
+                                    "contentType": "string",
+                                    "content": "string",
+                                    "statusCode": 0,
+                                    "headers": {},
+                                    "reasonPhrase": "string",
+                                    "isSuccessStatusCode": true,
+                                    "createdDateTime": "string",
+                                    "originalExpiration": "2023-07-15",
+                                    "expirationDateTime": "string",
+                                    "timeToLive": "2023-07-15"
+                                }
+                            },
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "example": "<Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse> <contentType>string</contentType> <content>string</content> <statusCode>0</statusCode> <headers /> <reasonPhrase>string</reasonPhrase> <isSuccessStatusCode>true</isSuccessStatusCode> <createdDateTime>string</createdDateTime> <originalExpiration>00:10:00</originalExpiration> <expirationDateTime>string</expirationDateTime> <timeToLive>00:10:00</timeToLive> </Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse>"
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "example": "<Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse> <contentType>string</contentType> <content>string</content> <statusCode>0</statusCode> <headers /> <reasonPhrase>string</reasonPhrase> <isSuccessStatusCode>true</isSuccessStatusCode> <createdDateTime>string</createdDateTime> <originalExpiration>00:10:00</originalExpiration> <expirationDateTime>string</expirationDateTime> <timeToLive>00:10:00</timeToLive> </Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse>"
+                            },
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "application/x-www-formurlencoded": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "video/mp4": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "video/mpeg": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "video/ogg": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "image/jpeg": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "image/gif": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.AspNetCore.Mvc.BadRequestProblemDetails"
+                                },
+                                "example": {
+                                    "title": "string",
+                                    "status": 0,
+                                    "detail": "string",
+                                    "type": "string",
+                                    "instance": "string",
+                                    "extensions": {}
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.AspNetCore.Mvc.NotFoundProblemDetails"
+                                },
+                                "example": {
+                                    "type": "string",
+                                    "title": "string",
+                                    "status": 0,
+                                    "detail": "string",
+                                    "instance": "string",
+                                    "extensions": {}
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.AspNetCore.Mvc.InternalServerErrorProblemDetails"
+                                },
+                                "example": {
+                                    "type": "string",
+                                    "title": "string",
+                                    "status": 0,
+                                    "detail": "string",
+                                    "instance": "string",
+                                    "extensions": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Cache"
+                ],
+                "summary": "Posts a constant value to the requested endpoint",
+                "description": "Posts a constant value to the requested endpoint",
+                "operationId": "PostConst",
+                "parameters": [
+                    {
+                        "name": "cacheKey",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "constantValue",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "contentType",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "expiration",
+                        "in": "query",
+                        "description": "Format - time-span.",
+                        "schema": {
+                            "$ref": "#/components/schemas/TimeSpan"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "text/plain": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "examples": {
+                                "default": {
+                                    "value": null
+                                }
+                            }
+                        },
+                        "text/html": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "example": "<Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest> <requestUri>string</requestUri> <method>Get</method> <contentType>string</contentType> <bytesContent>string</bytesContent> <stringContent>string</stringContent> <headers /> </Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest>"
+                        },
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpRequest"
+                            },
+                            "example": {
+                                "requestUri": "string",
+                                "method": "Get",
+                                "contentType": "string",
+                                "bytesContent": "string",
+                                "stringContent": "string",
+                                "headers": {}
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Either the cached value was found and returned or it was retrieved from the HTTP endpoint and cached",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "example": {
+                                    "contentType": "string",
+                                    "content": "string",
+                                    "statusCode": 0,
+                                    "headers": {},
+                                    "reasonPhrase": "string",
+                                    "isSuccessStatusCode": true,
+                                    "createdDateTime": "string",
+                                    "originalExpiration": "2023-07-15",
+                                    "expirationDateTime": "string",
+                                    "timeToLive": "2023-07-15"
+                                }
+                            },
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "example": "<Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse> <contentType>string</contentType> <content>string</content> <statusCode>0</statusCode> <headers /> <reasonPhrase>string</reasonPhrase> <isSuccessStatusCode>true</isSuccessStatusCode> <createdDateTime>string</createdDateTime> <originalExpiration>00:10:00</originalExpiration> <expirationDateTime>string</expirationDateTime> <timeToLive>00:10:00</timeToLive> </Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse>"
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "example": "<Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse> <contentType>string</contentType> <content>string</content> <statusCode>0</statusCode> <headers /> <reasonPhrase>string</reasonPhrase> <isSuccessStatusCode>true</isSuccessStatusCode> <createdDateTime>string</createdDateTime> <originalExpiration>00:10:00</originalExpiration> <expirationDateTime>string</expirationDateTime> <timeToLive>00:10:00</timeToLive> </Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse>"
+                            },
+                            "application/octet-stream": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "application/x-www-formurlencoded": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "video/mp4": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "video/mpeg": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "video/ogg": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "image/jpeg": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "image/png": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            },
+                            "image/gif": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.RedisCacheAccessor.Abstractions.SerializableHttpResponse"
+                                },
+                                "examples": {
+                                    "default": {
+                                        "value": null
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "You done fucked up!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.AspNetCore.Mvc.BadRequestProblemDetails"
+                                },
+                                "example": {
+                                    "title": "string",
+                                    "status": 0,
+                                    "detail": "string",
+                                    "type": "string",
+                                    "instance": "string",
+                                    "extensions": {}
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The shit you're looking for doesn't fucking exist!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.AspNetCore.Mvc.NotFoundProblemDetails"
+                                },
+                                "example": {
+                                    "type": "string",
+                                    "title": "string",
+                                    "status": 0,
+                                    "detail": "string",
+                                    "instance": "string",
+                                    "extensions": {}
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Shit hit the fucking fan!",
+                        "content": {
+                            "application/json+problem": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Dgmjr.AspNetCore.Mvc.InternalServerErrorProblemDetails"
+                                },
+                                "example": {
+                                    "type": "string",
+                                    "title": "string",
+                                    "status": 0,
+                                    "detail": "string",
+                                    "instance": "string",
+                                    "extensions": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "tags": [
+                    "Diagnostics"
+                ],
+                "summary": "\"Ping\"s the server",
+                "description": "\"Ping\"s the server",
+                "operationId": "Ping",
+                "responses": {
+                    "200": {
+                        "description": "Pong",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                },
+                                "example": "pong"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ProblemDetails": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "integer",
+                        "format": "int32",
+                        "nullable": true
+                    },
+                    "detail": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "type": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "instance": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "CacheInfoResponse": {
+                "type": "object",
+                "properties": {
+                    "contentType": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "content": {
+                        "type": "string",
+                        "format": "byte",
+                        "nullable": true
+                    },
+                    "statusCode": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "headers": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string",
+                            "nullable": true
+                        },
+                        "nullable": true
+                    },
+                    "reasonPhrase": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isSuccessStatusCode": {
+                        "type": "boolean",
+                        "readOnly": true
+                    },
+                    "createdDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "originalExpiration": {
+                        "$ref": "#/components/schemas/TimeSpan"
+                    },
+                    "expirationDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "timeToLive": {
+                        "$ref": "#/components/schemas/TimeSpan"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "HttpRequestMethod": {
+                "enum": [
+                    "Get",
+                    "Post",
+                    "Put",
+                    "Delete",
+                    "Patch",
+                    "Head",
+                    "Options",
+                    "Trace"
+                ],
+                "type": "string",
+                "description": "\n\nGet\n\nPost\n\nPut\n\nDelete\n\nPatch\n\nHead\n\nOptions\n\nTrace",
+                "x-enum-varnames": [
+                    "Get",
+                    "Post",
+                    "Put",
+                    "Delete",
+                    "Patch",
+                    "Head",
+                    "Options",
+                    "Trace"
+                ],
+                "default": "Get"
+            },
+            "TimeSpan": {
+                "pattern": "\"^(?:([0-9]{0,4}\\:)?(?:[0-9]{0,100}\\:)?(?:[0-9]{0,1000})$\"",
+                "type": "string",
+                "properties": {
+                    "ticks": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "days": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "hours": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "milliseconds": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "microseconds": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "nanoseconds": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "minutes": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "seconds": {
+                        "type": "integer",
+                        "format": "int32",
+                        "readOnly": true
+                    },
+                    "totalDays": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    },
+                    "totalHours": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    },
+                    "totalMilliseconds": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    },
+                    "totalMicroseconds": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    },
+                    "totalNanoseconds": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    },
+                    "totalMinutes": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    },
+                    "totalSeconds": {
+                        "type": "number",
+                        "format": "double",
+                        "readOnly": true
+                    }
+                },
+                "additionalProperties": false,
+                "description": "A time span in the format of <c>hh:mm:ss</c>",
+                "format": "time-span",
+                "example": "00:10:00",
+                "default": "01:00:00"
+            },
+            "MimeType": {
+                "type": "string",
+                "enum": [
+                    "application/json",
+                    "application/json+cache",
+                    "application/octet-stream",
+                    "application/xml",
+                    "audio/mp3",
+                    "audio/wav",
+                    "image/gif",
+                    "image/ico",
+                    "image/jpeg",
+                    "image/png",
+                    "text/html",
+                    "text/plain",
+                    "video/mp4",
+                    "video/mpeg",
+                    "video/ogg",
+                    "video/wmv"
+                ],
+                "default": "application/octet-stream"
+            },
+            "Range": {
+                "pattern": "items\\s*(?<Start>[0-9]+)\\-(?:(?<End>[0-9]+)?|[\\*])",
+                "type": "string",
+                "description": "Indicates the part of a resultset that the server should return.  It's a zero-based index from the start to the end if the desired resultset.  The format is \"items {start}-{end}\".  If the end is omitted, the server will return all items from the start to the end of the resultset.  If the start is omitted, the server will return all items from the beginning to the end of the resultset.  If both are omitted, the server will return all items in the resultset.  The server will return a 416 (Range Not Satisfiable) if the requested range is not satisfiable.",
+                "format": "Range",
+                "default": "items 0-2147483647",
+                "example": "items 0-20"
+            },
+            "Cache-Control":{
+                "type": "string",
+                "description": "Validates and parses a \"Cache-Control\" header value with the named group \"directive\" holding one of the following values:\r\n*max-age\r\n*no-cache\r\n*no-store\r\n*no-transform\r\n*only-if-cached\r\n*public\r\n*private\r\n*must-revalidate\r\n*proxy-revalidate\r\n*s-maxage\r\n and \"value\" holding an optional numeric argument.",
+                "pattern": "(?i)\\b(?:(?<directive>max-age|no-cache|no-store|no-transform|only-if-cached|public|private|must-revalidate|proxy-revalidate|s-maxage)\\s*(?:=\\s*(?:(?<delta-seconds>\\d+)|(?<value>.*?)))?\\s*(?:,\\s*|$))+\\b"
+            },
+            "ErrorCodes": {
+                "anyOf": [
+                    {
+                        "$ref": "#/components/responses/400"
+                    },
+                    {
+                        "$ref": "#/components/responses/404"
+                    },
+                    {
+                        "$ref": "#/components/responses/418"
+                    },
+                    {
+                        "$ref": "#/components/responses/500"
+                    }
+                ]
+            }
+        },
+        "parameters": {
+            "Accept": {
+                "name": "accept",
+                "in": "header",
+                "required": true,
+                "schema": {
+                    "$ref": "#/components/schemas/MimeType"
+                }
+            },
+            "Content-Type": {
+                "name": "contentType",
+                "in": "header",
+                "required": true,
+                "schema": {
+                    "$ref": "#/components/schemas/MimeType"
+                }
+            },
+            "Range": {
+                "name": "range",
+                "in": "header",
+                "description": "Format - Range.",
+                "schema": {
+                    "$ref": "#/components/schemas/Range"
+                }
+            },
+            "Cache-Control": {
+                "in": "header",
+                "name": "cacheControl",
+                "schema": {
+                    "$ref": "#/components/schemas/Cache-Control"
+                }
+            }
+        },
+        "responses": {
+            "204Expires": {
+                "description": "The cached value with the specified key will expire at the time noted in the \"Expires\" response header.",
+                "headers": {
+                    "Expires": {
+                        "schema": {
+                            "description": "The date and time at which the response is considered stale.",
+                            "format": "date-time"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "You done fucked up!",
+                "content": {
+                    "application/json+problem": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ProblemDetails"
+                        },
+                        "example": {
+                            "title": "Bad Request!!!",
+                            "status": 400,
+                            "detail": "You done fucked up!  You sent a bad request to the server and now it's refusing to respond to you!",
+                            "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400"
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "The shit you're looking for doesn't fucking exist!",
+                "content": {
+                    "application/json+problem": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ProblemDetails"
+                        },
+                        "example": {
+                            "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404",
+                            "title": "D!N!F!E!",
+                            "status": 404,
+                            "detail": "The shit you're looking for Does! Not! Fucking! Exist!"
+                        }
+                    }
+                }
+            },
+            "418": {
+                "description": "I'm a fucking TEAPOT, you moron!",
+                "content": {
+                    "application/json+problem": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ProblemDetails"
+                        },
+                        "example": {
+                            "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/418",
+                            "title": "I'm a fucking TEAPOT, you moron!",
+                            "status": 418,
+                            "detail": "I'mm a fucking teapot, short and stout. Here is my handle, here is my spout.  If you've reached this error code, you must shout, \"I'm a fucking idiot so kick me out!\""
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Shit hit the fucking fan!",
+                "content": {
+                    "application/json+problem": {
+                        "schema": {
+                            "$ref": "#/components/schemas/ProblemDetails"
+                        },
+                        "example": {
+                            "type": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500",
+                            "title": "OMG WE'RE ALL GONNA DIE!!!!",
+                            "status": 500,
+                            "detail": "THE SHIT HIT THE FUCKING FAN AND THE SERVER DOESN'T KNOW WTF JUST HAPPENED!!!"
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "apiKeyHeader": {
+                "type": "apiKey",
+                "name": "Ocp-Apim-Subscription-Key",
+                "in": "header"
+            },
+            "apiKeyQuery": {
+                "type": "apiKey",
+                "name": "subscription-key",
+                "in": "query"
+            }
+        }
+    },
+    "security": [
+        {
+            "apiKeyHeader": []
+        },
+        {
+            "apiKeyQuery": []
+        }
+    ]
+}
