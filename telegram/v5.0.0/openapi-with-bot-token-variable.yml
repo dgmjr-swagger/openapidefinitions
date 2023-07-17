@@ -14,7 +14,7 @@ info:
   contact: 
     name: DGMJR-IO / Telegram
     url: 'https://swagger.dgmjr.io/openapidefinitions/tree/main/telegram'
-    email: oepnpi@dgmjr.io
+    email: telegram@my-api.rest
 externalDocs:
   description: The Telegram Bot API.
   url: https://core.telegram.org/bots/api
@@ -22,18 +22,25 @@ servers:
   - url: https://api.telegram.org/bot{token}
     variables:
       token:
-        default: 009344459:abcdffgrttySFAssf__ssdffkeeeff
+        default: 009344459:abcdffgrttySFAssf98ssdffkeeeff
         description: The bot API token
 tags: 
   - name: messages
     description: Operationgs dealing with sending or receiving messages
   - name: users
     description: Operations dealing with retrieving or setting information about users
+  - name: photos
+    description: Operations dealing with photographs
+  - name: videos
+    description: Operations dealing with videos
+  - name: files
+    description: Operations dealing with files
 paths:
   /getUpdates:
     get:
       tags:
         - messages
+      operationId: _getUpdates
       description: Use this method to receive incoming updates using long polling ([wiki](https://en.wikipedia.org/wiki/Push_technology#Long_polling)). An Array of [Update](https://core.telegram.org/bots/api/#update) objects is returned.
       externalDocs:
         url: https://core.telegram.org/bots/api/#getupdates
@@ -43,7 +50,16 @@ paths:
           schema:
             type: integer
             default: 0
-            x-ms-summary: ''
+            x-ms-summary: >-
+              Identifier of the first update to be returned. Must be greater by
+              one than the highest among the identifiers of previously received
+              updates. By default, updates starting with the earliest unconfirmed
+              update are returned. An update is considered confirmed as soon as
+              [getUpdates](https://core.telegram.org/bots/api/#getupdates) is
+              called with an *offset* higher than its *update\_id*. The negative
+              offset can be specified to retrieve updates starting from *-offset*
+              update from the end of the updates queue. All previous updates will
+              forgotten.
             format: int64
           required: true
           description: >-
@@ -82,9 +98,7 @@ paths:
         - name: allowed_updates
           in: query
           schema:
-            type: array
-            items:
-              type: string
+            $ref: '#/components/schemas/AllowedUpdates'
           description: >-
             A JSON-serialized list of the update types you want your bot to
             receive. For example, specify [“message”, “edited\_channel\_post”,
@@ -112,10 +126,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _getUpdates
     post:
       tags: 
         -  messages
+      operationId: _postGetUpdates
       description: >-
         Use this method to receive incoming updates using long polling
         ([wiki](https://en.wikipedia.org/wiki/Push_technology#Long_polling)). An
@@ -148,11 +162,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _postGetUpdates
   /setWebhook:
     post:
       tags: 
         -  messages
+      operationId: _setWebhook
       description: >-
         Use this method to specify a url and receive incoming updates via an
         outgoing webhook. Whenever there is an update for the bot, we will send
@@ -187,11 +201,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _setWebhook
   /deleteWebhook:
     delete:
       tags:
         - messages
+      operationId: _deleteWebhook
       description: >-
         Use this method to remove webhook integration if you decide to switch
         back to [getUpdates](https://core.telegram.org/bots/api/#getupdates).
@@ -218,10 +232,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _deleteWebhook
     post:
       tags: 
         -  messages
+      operationId: _postDeleteWebhook
       description: >-
         Use this method to remove webhook integration if you decide to switch
         back to [getUpdates](https://core.telegram.org/bots/api/#getupdates).
@@ -253,11 +267,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _postDeleteWebhook
   /getWebhookInfo:
     get:
       tags:
         - messages
+      operationId: _getWebhookInfo
       description: >-
         Use this method to get current webhook status. Requires no parameters.
         On success, returns a
@@ -280,10 +294,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _getWebhookInfo
     post:
       tags: 
         -  messages
+      operationId: _postGetWebhookInfo
       description: >-
         Use this method to get current webhook status. Requires no parameters.
         On success, returns a
@@ -306,11 +320,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _postGetWebhookInfo
   /getMe:
     get:
       tags:
         - messages
+      operationId: _getMe
       description: >-
         A simple method for testing your bot's auth token. Requires no
         parameters. Returns basic information about the bot in form of a
@@ -330,10 +344,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _getMe
     post:
       tags: 
         -  messages
+      operationId: _postGetMe
       description: >-
         A simple method for testing your bot's auth token. Requires no
         parameters. Returns basic information about the bot in form of a
@@ -353,11 +367,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _postGetMe
   /logOut:
     post:
       tags: 
         -  messages
+      operationId: _logOut
       description: >-
         Use this method to log out from the cloud Bot API server before
         launching the bot locally. You **must** log out the bot before running
@@ -380,11 +394,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _logOut
   /close:
     post:
       tags: 
         -  messages
+      operationId: _close
       description: >-
         Use this method to close the bot instance before moving it from one
         local server to another. You need to delete the webhook before calling
@@ -406,11 +420,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _close
   /sendMessage:
     post:
       tags: 
         -  messages
+      operationId: _sendMessage
       description: >-
         Use this method to send text messages. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -441,11 +455,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendMessage
   /forwardMessage:
     post:
       tags: 
         -  messages
+      operationId: _forwardMessage
       description: >-
         Use this method to forward messages of any kind. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -476,11 +490,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _forwardMessage
   /copyMessage:
     post:
       tags: 
         -  messages
+      operationId: _copyMessage
       description: >-
         Use this method to copy messages of any kind. The method is analogous to
         the method
@@ -515,11 +529,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _copyMessage
   /sendPhoto:
     post:
       tags: 
         -  messages
+      operationId: _sendPhoto
       description: >-
         Use this method to send photos. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -544,11 +558,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendPhoto
   /sendAudio:
     post:
       tags: 
         -  messages
+      operationId: _sendAudio
       description: >-
         Use this method to send audio files, if you want Telegram clients to
         display them in the music player. Your audio must be in the .MP3 or .M4A
@@ -582,11 +596,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendAudio
   /sendDocument:
     post:
       tags: 
         -  messages
+      operationId: _sendDocument
       description: >-
         Use this method to send general files. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned. Bots
@@ -613,11 +627,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendDocument
   /sendVideo:
     post:
       tags: 
         -  messages
+      operationId: _sendVideo
       description: >-
         Use this method to send video files, Telegram clients support mp4 videos
         (other formats may be sent as
@@ -646,11 +660,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendVideo
   /sendAnimation:
     post:
       tags: 
         -  messages
+      operationId: _sendAnimation
       description: >-
         Use this method to send animation files (GIF or H.264/MPEG-4 AVC video
         without sound). On success, the sent
@@ -678,11 +692,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendAnimation
   /sendVoice:
     post:
       tags: 
         -  messages
+      operationId: _sendVoice
       description: >-
         Use this method to send audio files, if you want Telegram clients to
         display the file as a playable voice message. For this to work, your
@@ -713,11 +727,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendVoice
   /sendVideoNote:
     post:
       tags: 
         -  messages
+      operationId: _sendVideoNote
       description: >-
         As of [v.4.0](https://telegram.org/blog/video-messages-and-telescope),
         Telegram clients support rounded square mp4 videos of up to 1 minute
@@ -744,11 +758,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendVideoNote
   /sendMediaGroup:
     post:
       tags: 
         -  messages
+      operationId: _sendMediaGroup
       description: >-
         Use this method to send a group of photos, videos, documents or audios
         as an album. Documents and audio files can be only grouped in an album
@@ -776,11 +790,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendMediaGroup
   /sendLocation:
     post:
       tags: 
         -  messages
+      operationId: _sendLocation
       description: >-
         Use this method to send point on the map. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -811,11 +825,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendLocation
   /editMessageLiveLocation:
     post:
       tags: 
         -  messages
+      operationId: _editMessageLiveLocation
       description: >-
         Use this method to edit live location messages. A location can be edited
         until its *live\_period* expires or editing is explicitly disabled by a
@@ -851,11 +865,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _editMessageLiveLocation
   /stopMessageLiveLocation:
     post:
       tags: 
         -  messages
+      operationId: _stopMessageLiveLocation
       description: >-
         Use this method to stop updating a live location message before
         *live\_period* expires. On success, if the message was sent by the bot,
@@ -888,11 +902,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _stopMessageLiveLocation
   /sendVenue:
     post:
       tags: 
         -  messages
+      operationId: _sendVenue
       description: >-
         Use this method to send information about a venue. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -923,11 +937,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendVenue
   /sendContact:
     post:
       tags: 
         -  messages
+      operationId: _sendContact
       description: >-
         Use this method to send phone contacts. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -958,11 +972,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendContact
   /sendPoll:
     post:
       tags: 
         -  messages
+      operationId: _sendPoll
       description: >-
         Use this method to send a native poll. On success, the sent
         [Message](https://core.telegram.org/bots/api/#message) is returned.
@@ -993,11 +1007,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendPoll
   /sendDice:
     post:
       tags: 
         -  messages
+      operationId: _sendDice
       description: >-
         Use this method to send an animated emoji that will display a random
         value. On success, the sent
@@ -1029,11 +1043,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendDice
   /sendChatAction:
     post:
       tags: 
         -  messages
+      operationId: _sendChatAction
       description: >-
         Use this method when you need to tell the user that something is
         happening on the bot's side. The status is set for 5 seconds or less
@@ -1078,9 +1092,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _sendChatAction
   /getUserProfilePhotos:
     get:
+      tags:
+        - messages
+        - photos
+      operationId: _getUserProfilePhotos
       description: >-
         Use this method to get a list of profile pictures for a user. Returns a
         [UserProfilePhotos](https://core.telegram.org/bots/api/#userprofilephotos)
@@ -1106,7 +1123,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _getUserProfilePhotos
     post:
       tags: 
         -  messages
@@ -1144,13 +1160,27 @@ paths:
       operationId: _postGetUserProfilePhotos
   /getFile:
     get:
+      operationId: _getFile
+      tags:
+        - files
       parameters:
         - name: file_id
           in: query
           schema:
             type: integer
             format: int64
-        required: true
+      description: >-
+        Use this method to get basic info about a file and prepare it for
+        downloading. For the moment, bots can download files of up to 20MB in
+        size. On success, a [File](https://core.telegram.org/bots/api/#file)
+        object is returned. The file can then be downloaded via the link
+        `https://api.telegram.org/file/bot<token>/<file_path>`, where
+        `<file_path>` is taken from the response. It is guaranteed that the link
+        will be valid for at least 1 hour. When the link expires, a new one can
+        be requested by calling
+        [getFile](https://core.telegram.org/bots/api/#getfile) again.
+      externalDocs:
+        url: https://core.telegram.org/bots/api/#getfile
       responses:
         '200':
           description: ''
@@ -1164,10 +1194,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _getFile
     post:
       tags: 
         -  messages
+      operationId: _postGetFile
       description: >-
         Use this method to get basic info about a file and prepare it for
         downloading. For the moment, bots can download files of up to 20MB in
@@ -1205,11 +1235,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _postGetFile
   /kickChatMember:
     post:
       tags: 
         -  messages
+      operationId: _kickChatMember
       description: >-
         Use this method to kick a user from a group, a supergroup or a channel.
         In the case of supergroups and channels, the user will not be able to
@@ -1244,7 +1274,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _kickChatMember
   /unbanChatMember:
     post:
       tags: 
@@ -1288,6 +1317,7 @@ paths:
       operationId: _unbanChatMember
   /restrictChatMember:
     post:
+      operationId: _restrictChatMember
       tags: 
         -  messages
       description: >-
@@ -1322,11 +1352,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _restrictChatMember
   /promoteChatMember:
     post:
       tags: 
         -  messages
+      operationId: _promoteChatMember
       description: >-
         Use this method to promote or demote a user in a supergroup or a
         channel. The bot must be an administrator in the chat for this to work
@@ -1359,7 +1389,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      operationId: _promoteChatMember
   /setChatAdministratorCustomTitle:
     post:
       tags: 
@@ -3175,6 +3204,25 @@ components:
         update.
       externalDocs:
         url: https://core.telegram.org/bots/api/#update
+    AllowedUpdates:
+      type: array
+      items:
+        type: string
+        enum:
+          - message
+          - edited_message
+          - channel_post
+          - edited_channel_post
+          - inline_query
+          - chosen_inline_query
+          - callback_query
+          - shipping_query
+          - pre_checkout_query
+          - poll
+          - poll_answer
+          - my_chat_member
+          - chat_member
+          - chat_join_request
     WebhookInfo:
       required:
         - has_custom_certificate
@@ -7383,21 +7431,8 @@ components:
           default: 0
         allowed_updates:
           type: array
-          description: >-
-            A JSON-serialized list of the update types you want your bot to
-            receive. For example, specify [“message”, “edited\_channel\_post”,
-            “callback\_query”] to only receive updates of these types. See
-            [Update](https://core.telegram.org/bots/api/#update) for a complete
-            list of available update types. Specify an empty list to receive all
-            updates regardless of type (default). If not specified, the previous
-            setting will be used.  
-
-
-            Please note that this parameter doesn't affect updates created
-            before the call to the getUpdates, so unwanted updates may be
-            received for a short period of time.
           items:
-            type: string
+            $ref: '#/components/schemas/AllowedUpdates'
     getUpdatesResponse:
       required:
         - ok
