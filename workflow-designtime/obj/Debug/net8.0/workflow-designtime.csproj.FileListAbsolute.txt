@@ -1,0 +1,16 @@
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/bin/Debug/net8.0/workflow-designtime
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/bin/Debug/net8.0/workflow-designtime.deps.json
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/bin/Debug/net8.0/workflow-designtime.runtimeconfig.json
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/bin/Debug/net8.0/workflow-designtime.dll
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/bin/Debug/net8.0/workflow-designtime.pdb
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.csproj.AssemblyReference.cache
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.GeneratedMSBuildEditorConfig.editorconfig
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.AssemblyInfoInputs.cache
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.AssemblyInfo.cs
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.csproj.CoreCompileInputs.cache
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.sourcelink.json
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.dll
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/refint/workflow-designtime.dll
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.pdb
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/workflow-designtime.genruntimeconfig.cache
+/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/Debug/net8.0/ref/workflow-designtime.dll

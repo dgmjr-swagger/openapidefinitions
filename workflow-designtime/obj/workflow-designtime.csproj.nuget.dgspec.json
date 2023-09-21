@@ -1,0 +1,72 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/workflow-designtime.csproj": {}
+  },
+  "projects": {
+    "/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/workflow-designtime.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/workflow-designtime.csproj",
+        "projectName": "workflow-designtime",
+        "projectPath": "/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/workflow-designtime.csproj",
+        "packagesPath": "/Users/david/.nuget/packages/",
+        "outputPath": "/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/david/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "/Users/david/.nuget/packages": {},
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dgmjr.pkgs.visualstudio.com/dgmjr-io/_packaging/dgmjr-io/nuget/v3/index.json": {},
+          "https://nuget.pkg.github.com/dgmjr-io/index.json": {},
+          "https://www.powershellgallery.com/api/v2": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "version": "[8.0.0-preview.5.23280.8, 8.0.0-preview.5.23280.8]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.100-preview.5.23303.2/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

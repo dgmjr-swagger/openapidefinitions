@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "oMaB9W79BSo/6gQXD3XqM3y00E/0tl4Bp/3kJvJcSOH7OEQg6VUdRf2SeUMldlZY8KcVv1IWzEUDfj+DXG7Isg==",
+  "success": true,
+  "projectFilePath": "/Users/david/GitHub/dgmjr-swagger/OpenAPIDefinitions/workflow-designtime/workflow-designtime.csproj",
+  "expectedPackageFiles": [
+    "/Users/david/.nuget/packages/microsoft.netcore.app.host.osx-arm64/8.0.0-preview.5.23280.8/microsoft.netcore.app.host.osx-arm64.8.0.0-preview.5.23280.8.nupkg.sha512"
+  ],
+  "logs": []
+}
